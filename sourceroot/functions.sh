@@ -304,12 +304,19 @@ setup_sshd() {
 	run mount -t devpts none /dev/pts
 
 	# Prepare dirs.
-	dodir /etc/dropbear /var/log /var/run /root/.ssh
+	dodir /var/log /var/run /root/.ssh
+	if ! [ -d /etc/dropbear ]; then
+		dodir /etc/dropbear
+	fi
 
 	# Generate host keys.
 	einfo "Generating dropbear ssh host keys ..."
-	run dropbearkey -t rsa -f /etc/dropbear/dropbear_rsa_host_key > /dev/null
-	run dropbearkey -t dss -f /etc/dropbear/dropbear_dss_host_key > /dev/null
+	if ! [ -f /etc/dropbear/dropbear_rsa_host_key ]; then
+		run dropbearkey -t rsa -f /etc/dropbear/dropbear_rsa_host_key > /dev/null
+	fi
+	if ! [ -f /etc/dropbear/dropbear_dss_host_key ]; then
+		run dropbearkey -t dss -f /etc/dropbear/dropbear_dss_host_key > /dev/null
+	fi
 
 	# Prepare root account.
 	run echo 'root:x:0:0:root:/root:/bin/sh' > /etc/passwd
@@ -328,7 +335,7 @@ setup_sshd() {
 		# sshd_wait exist, now we should sleep for X sec.
 		if [ "${sshd_wait}" -gt 0 2>/dev/null ]; then
 			einfo "Waiting ${sshd_wait}s (sshd_wait)"
-				run sleep "${sshd_wait}"
+				sleep "${sshd_wait}"
 		else
 			ewarn "\$sshd_wait variable must be numeric and greater than zero. Skipping sshd_wait."
 		fi

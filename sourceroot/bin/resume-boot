@@ -5,3 +5,4 @@
 
 if [ -f '/rescueshell.pid' ]; then kill -9 "$(cat /rescueshell.pid)"; fi
 if [ -f '/remote-rescueshell.lock' ]; then rm '/remote-rescueshell.lock'; fi
+killall sleep
