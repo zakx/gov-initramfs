@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "Opening /dev/md1..."
+cryptsetup luksOpen /dev/md1 vault
+
